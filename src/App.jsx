@@ -14,6 +14,8 @@ function App() {
   
   // Estado para los puntos
   const [puntos, setPuntos] = useState(0);
+  // Estado para los puntos a restar
+  const [puntosRestar, setPuntosRestar] = useState(0);
   
   // Estados para los nombres de los equipos
   const [nombreEquipo1, setNombreEquipo1] = useState('');
@@ -21,6 +23,9 @@ function App() {
   
   // Estado para almacenar las filas de puntos
   const [filasPuntos, setFilasPuntos] = useState([{ equipo1: null, equipo2: null }]);
+  
+  // Estado para rastrear la celda seleccionada
+  const [celdaSeleccionada, setCeldaSeleccionada] = useState(null); // {filaIndex, columna}
 
   // Calcular el valor total
   const calcularValor = () => {
@@ -41,6 +46,12 @@ function App() {
     if (levantarMuerto) {
       total += 100;
     }
+    
+    // Agregar puntos del input number
+    total += puntos;
+    
+    // Restar puntos del input de restar
+    total -= puntosRestar;
     
     return total;
   };
@@ -103,6 +114,8 @@ function App() {
       
       // Actualizar el estado
       setFilasPuntos(nuevasFilas);
+      // Resetear el input de puntos
+      setPuntos(0);
     }
   };
   
@@ -126,6 +139,8 @@ function App() {
       
       // Actualizar el estado
       setFilasPuntos(nuevasFilas);
+      // Resetear el input de puntos
+      setPuntos(0);
     }
   };
 
@@ -161,6 +176,17 @@ function App() {
 
         {/* Contenedor de checkboxes */}
         <div className="border p-4 rounded mb-4 w-100">
+          {/* Input para restar puntos */}
+          <div className="d-flex align-items-center mb-3">
+            <input
+              type="number"
+              value={puntosRestar}
+              onChange={(e) => setPuntosRestar(Number(e.target.value))}
+              placeholder="Puntos a restar"
+              className="form-control me-2 flex-grow-1"
+            />
+          </div>
+          
           {/* Input para agregar puntos */}
           <div className="d-flex align-items-center mb-3">
             <input
@@ -294,10 +320,18 @@ function App() {
               {/* Mostrar puntos de los equipos */}
               {filasPuntos.map((fila, rowIndex) => (
                 <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'table-striped' : ''}>
-                  <td className="text-center text-white">
+                  <td
+                    className={`text-center text-white ${celdaSeleccionada && celdaSeleccionada.filaIndex === rowIndex && celdaSeleccionada.columna === 'equipo1' ? 'bg-info' : ''}`}
+                    onClick={() => setCeldaSeleccionada({ filaIndex: rowIndex, columna: 'equipo1' })}
+                    style={{ cursor: 'pointer' }}
+                  >
                     {fila.equipo1 !== null ? fila.equipo1 : ''}
                   </td>
-                  <td className="text-center text-white">
+                  <td
+                    className={`text-center text-white ${celdaSeleccionada && celdaSeleccionada.filaIndex === rowIndex && celdaSeleccionada.columna === 'equipo2' ? 'bg-info' : ''}`}
+                    onClick={() => setCeldaSeleccionada({ filaIndex: rowIndex, columna: 'equipo2' })}
+                    style={{ cursor: 'pointer' }}
+                  >
                     {fila.equipo2 !== null ? fila.equipo2 : ''}
                   </td>
                 </tr>
@@ -305,12 +339,51 @@ function App() {
               {/* Agregar filas vacías si es necesario para llegar a 10 filas */}
               {Array.from({ length: Math.max(10 - filasPuntos.length, 0) }).map((_, index) => (
                 <tr key={filasPuntos.length + index} className={(filasPuntos.length + index) % 2 === 0 ? 'table-striped' : ''}>
-                  <td className="text-center"></td>
-                  <td className="text-center"></td>
+                  <td
+                    className={`text-center ${celdaSeleccionada && celdaSeleccionada.filaIndex === filasPuntos.length + index && celdaSeleccionada.columna === 'equipo1' ? 'bg-info' : ''}`}
+                    onClick={() => setCeldaSeleccionada({ filaIndex: filasPuntos.length + index, columna: 'equipo1' })}
+                    style={{ cursor: 'pointer' }}
+                  ></td>
+                  <td
+                    className={`text-center ${celdaSeleccionada && celdaSeleccionada.filaIndex === filasPuntos.length + index && celdaSeleccionada.columna === 'equipo2' ? 'bg-info' : ''}`}
+                    onClick={() => setCeldaSeleccionada({ filaIndex: filasPuntos.length + index, columna: 'equipo2' })}
+                    style={{ cursor: 'pointer' }}
+                  ></td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+        
+        {/* Botón para borrar casillero */}
+        <div className="mt-3">
+          <button
+            onClick={() => {
+              if (celdaSeleccionada) {
+                // Crear una copia del array de filas
+                const nuevasFilas = [...filasPuntos];
+                
+                // Encontrar la fila seleccionada
+                const filaIndex = celdaSeleccionada.filaIndex;
+                
+                // Si la fila existe en el array de filas
+                if (filaIndex < nuevasFilas.length) {
+                  // Borrar el contenido de la celda seleccionada
+                  nuevasFilas[filaIndex][celdaSeleccionada.columna] = null;
+                  
+                  // Actualizar el estado
+                  setFilasPuntos(nuevasFilas);
+                  
+                  // Resetear la celda seleccionada
+                  setCeldaSeleccionada(null);
+                }
+              }
+            }}
+            className="btn btn-danger"
+            disabled={!celdaSeleccionada}
+          >
+            Borrar Casillero
+          </button>
         </div>
         {/* Mensaje del equipo ganador */}
         <div className="mt-4 text-center text-white">
