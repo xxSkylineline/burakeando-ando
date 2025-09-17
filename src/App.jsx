@@ -161,7 +161,7 @@ function App() {
               value={nombreEquipo1}
               onChange={(e) => setNombreEquipo1(e.target.value)}
               placeholder="Nombre del Equipo 1"
-              className="form-control me-2 flex-grow-1"
+              className="form-control me-2 flex-grow-1 text-light"
             />
             <input
               type="text"
@@ -273,36 +273,42 @@ function App() {
             </div>
             
             {/* Botones para agregar puntos y reset */}
-            <div className="d-grid gap-2 mt-3">
-              <button
-                onClick={handleIngresarPuntosEquipo1}
-                className="btn btn-success"
-              >
-                Agregar Puntos Equipo 1
-              </button>
-              <button
-                onClick={handleIngresarPuntosEquipo2}
-                className="btn btn-danger"
-              >
-                Agregar Puntos Equipo 2
-              </button>
-              <button
-                onClick={() => {
-                  // Resetear el input de puntos
-                  setPuntos(0);
-                  // Desmarcar todos los checkboxes
-                  setCorte(false);
-                  setPura(false);
-                  setImpura(false);
-                  setLevantarMuerto(false);
-                  // Resetear los dropdowns a 1
-                  setPuraCantidad(1);
-                  setImpuraCantidad(1);
-                }}
-                className="btn btn-warning"
-              >
-                RESET
-              </button>
+            <div className="d-flex justify-content-between mt-3">
+              <div className="col">
+                <button
+                  onClick={handleIngresarPuntosEquipo1}
+                  className="btn btn-success w-100"
+                >
+                  Agregar Puntos Equipo 1
+                </button>
+              </div>
+              <div className="col mx-2">
+                <button
+                  onClick={handleIngresarPuntosEquipo2}
+                  className="btn btn-danger w-100"
+                >
+                  Agregar Puntos Equipo 2
+                </button>
+              </div>
+              <div className="col">
+                <button
+                  onClick={() => {
+                    // Resetear el input de puntos
+                    setPuntos(0);
+                    // Desmarcar todos los checkboxes
+                    setCorte(false);
+                    setPura(false);
+                    setImpura(false);
+                    setLevantarMuerto(false);
+                    // Resetear los dropdowns a 1
+                    setPuraCantidad(1);
+                    setImpuraCantidad(1);
+                  }}
+                  className="btn btn-warning w-100"
+                >
+                  RESET
+                </button>
+              </div>
             </div>
           </div>
         </div>
